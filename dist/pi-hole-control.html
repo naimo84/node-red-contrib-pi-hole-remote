@@ -1,0 +1,73 @@
+<script type="text/javascript">
+    RED
+        .nodes
+        .registerType('pi-hole-control', {
+            category: 'pi-hole',
+            defaults: {
+                confignode: {
+                    value: "",
+                    type: "pi-hole-config"
+                },
+                command: {value:""},
+                name: {
+                    value: ""                   
+                }
+            },
+            inputs: 1,
+            outputs: 1,
+            color: "#E7AE24",
+            label: function () {
+                if (this.name) {
+                    return this.name;
+                } else if (this.confignode.name) {
+                    return this.confignode.name;
+                }
+
+                return "pi-hole Control";
+            },
+            icon: "pi-hole.png",
+            paletteLabel: "Control"
+        });
+</script>
+
+<script type="text/x-red" data-template-name="pi-hole-control">
+    <div class="form-row">
+        <label for="node-input-confignode">Config</label>
+        <input type="text" id="node-input-confignode">
+    </div>    
+    <div class="form-row">
+        <label for="node-input-name">Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <label for="node-input-command"><i class="fa fa-file"></i> Command</label>
+    <select type="text" id="node-input-command" style="width:70%">
+        <option value="">None</option>
+        <option value="enable">Enable Pi-hole</option>
+        <option value="disable">Disable Pi-hole</option>
+        <option value="restart">Restart Pi-hole</option>
+        <option value="updatePihole">Update Pi-hole subsystems</option>
+        <option value="updateGravity">Update the list of ad-serving domains</option>
+        <option value="flush">Flush Pi-hole logs</option>
+        <option value="status">Get Pi-hole status</option>
+        <option value="chronometer --json">Get Pi-hole stats (json formatted string)</option>
+        <option value="version">Get Pi-hole version</option>
+        <option value="logging on">Enable Pi-hole logging</option>
+        <option value="logging off">Disable Pi-hole logging</option>
+        <option value="query">Search the adlist for msg.payload/input</option>
+        <option value="query -exact">Search the adlist exactly for msg.payload/input</option>
+        <option value="whitelist">Whitelist: Add msg.payload/input to list</option>
+        <option value="whitelist -d">Whitelist: Remove msg.payload/input from list</option>
+        <option value="whitelist -l">Whitelist: Get list</option>
+        <option value="blacklist">Blacklist: Add msg.payload/input to list</option>
+        <option value="blacklist -d">Blacklist: Remove msg.payload/input from list</option>
+        <option value="blacklist -l">Blacklist: Get list</option>
+    </select>
+
+</script>
+
+<!-- Simple Help Text -->
+<script type="text/x-red" data-help-name="pi-hole-events">
+    <!--
+    
+-->
+</script>
