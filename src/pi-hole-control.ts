@@ -46,13 +46,30 @@ module.exports = function (RED: Red) {
 
 
     function getpiHoleConfig(node: Node, config) {
-        request({
-            url: config.url,
+        const httpOptions = {
+            url: "http://" + config.url + "/admin/index.php",
+            method: "GET",
             json: true
-        }, (error, response, content) => {
+        };
+
+        const httpsOptions = {
+            url: "https://" + config.url + "/admin/index.php",
+            method: "GET",
+            json: true,
+            rejectUnauthorized: false
+        };
+
+        let reqOptions;
+        if (config.piholeHttps === true) {
+            reqOptions = httpsOptions;
+        } else {
+            reqOptions = httpOptions;
+        }
+
+        request(reqOptions, (error, response, content) => {
             if (!error && response.statusCode == 200) {
                 var myObject = JSON.parse(content);
-                
+
                 node.send({
                     payload: myObject
                 });

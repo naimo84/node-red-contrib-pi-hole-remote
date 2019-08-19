@@ -31,10 +31,25 @@ module.exports = function (RED) {
         }
     }
     function getpiHoleConfig(node, config) {
-        request({
-            url: config.url,
+        var httpOptions = {
+            url: "http://" + config.url + "/admin/index.php",
+            method: "GET",
             json: true
-        }, function (error, response, content) {
+        };
+        var httpsOptions = {
+            url: "https://" + config.url + "/admin/index.php",
+            method: "GET",
+            json: true,
+            rejectUnauthorized: false
+        };
+        var reqOptions;
+        if (config.piholeHttps === true) {
+            reqOptions = httpsOptions;
+        }
+        else {
+            reqOptions = httpOptions;
+        }
+        request(reqOptions, function (error, response, content) {
             if (!error && response.statusCode == 200) {
                 var myObject = JSON.parse(content);
                 node.send({

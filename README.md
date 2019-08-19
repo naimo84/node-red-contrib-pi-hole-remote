@@ -27,7 +27,7 @@ $ cd ~/.node-red
 $ npm install node-red-contrib-pi-hole-remote
 ```
 
-Or search for ical-events in the manage palette menu
+Or search for pi-hole-remote in the manage palette menu
 
 Then run
 
