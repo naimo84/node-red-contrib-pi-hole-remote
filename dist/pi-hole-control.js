@@ -32,18 +32,18 @@ module.exports = function (RED) {
     }
     function getpiHoleConfig(node, config) {
         var httpOptions = {
-            url: "http://" + config.url + "/admin/index.php",
+            url: "http://" + config.url + "/admin/api.php?summary&auth=" + config.auth,
             method: "GET",
             json: true
         };
         var httpsOptions = {
-            url: "https://" + config.url + "/admin/index.php",
+            url: "https://" + config.url + "/admin/api.php?summary&auth=" + config.auth,
             method: "GET",
             json: true,
             rejectUnauthorized: false
         };
         var reqOptions;
-        if (config.piholeHttps === true) {
+        if (config.https === true) {
             reqOptions = httpsOptions;
         }
         else {

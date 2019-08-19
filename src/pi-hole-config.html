@@ -9,6 +9,12 @@
                 },
                 name: {
                     value: ""
+                },
+                auth: {
+                    value: ""
+                },
+                https:{
+                    value:false
                 }
             },
             label: function () {
@@ -26,6 +32,18 @@
             <i class="fa fa-tag"></i>
             pi-hole URL:</label>
         <input type="text" id="node-config-input-url" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-auth">
+            <i class="fa fa-tag"></i>
+            Auth Code:</label>
+        <input type="text" id="node-config-input-auth" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-https">
+            <i class="fa fa-tag"></i>
+           HTTPS:</label>
+        <input type="checkbox" id="node-config-input-https" placeholder="">
     </div>
     <div class="form-row">
         <label for="node-config-input-name">

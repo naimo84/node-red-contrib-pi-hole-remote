@@ -4,7 +4,9 @@ import request = require('request');
 
 export interface Config {
     url: string,
-    command: string
+    command: string,
+    auth: string,
+    https: boolean
 }
 
 module.exports = function (RED: Red) {
@@ -45,22 +47,23 @@ module.exports = function (RED: Red) {
 
 
 
-    function getpiHoleConfig(node: Node, config) {
+    function getpiHoleConfig(node: Node, config: Config) {
+
         const httpOptions = {
-            url: "http://" + config.url + "/admin/index.php",
+            url: "http://" + config.url + "/admin/api.php?summary&auth=" + config.auth,
             method: "GET",
             json: true
         };
 
         const httpsOptions = {
-            url: "https://" + config.url + "/admin/index.php",
+            url: "https://" + config.url + "/admin/api.php?summary&auth=" + config.auth,
             method: "GET",
             json: true,
             rejectUnauthorized: false
         };
 
         let reqOptions;
-        if (config.piholeHttps === true) {
+        if (config.https === true) {
             reqOptions = httpsOptions;
         } else {
             reqOptions = httpOptions;
