@@ -28,21 +28,22 @@ module.exports = function (RED) {
     }
     function executeCommand(command, node, configNode) {
         if (command === "" || command === "summary" || command === "status") {
-            callApi("summary", node, configNode);
+            callApi("summaryRaw", node, configNode);
         }
         if (command === "enable") {
             callApi("enable", node, configNode);
             setTimeout(function () {
-                callApi("summary", node, configNode);
                 callApi("summaryRaw", node, configNode);
             }, 1000);
         }
         if (command === "disable") {
             callApi("disable", node, configNode);
             setTimeout(function () {
-                callApi("summary", node, configNode);
                 callApi("summaryRaw", node, configNode);
             }, 1000);
+        }
+        if (command === "version") {
+            callApi("version", node, configNode);
         }
     }
     function callApi(command, node, config) {
