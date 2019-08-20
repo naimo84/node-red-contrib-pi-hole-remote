@@ -33,15 +33,15 @@ module.exports = function (RED) {
         if (command === "enable") {
             callApi("enable", node, configNode);
             setTimeout(function () {
-                getPiholeValues("summary", node, configNode);
-                getPiholeValues("summaryRaw", node, configNode);
+                callApi("summary", node, configNode);
+                callApi("summaryRaw", node, configNode);
             }, 1000);
         }
         if (command === "disable") {
             callApi("disable", node, configNode);
             setTimeout(function () {
-                getPiholeValues("summary", node, configNode);
-                getPiholeValues("summaryRaw", node, configNode);
+                callApi("summary", node, configNode);
+                callApi("summaryRaw", node, configNode);
             }, 1000);
         }
     }
@@ -69,68 +69,6 @@ module.exports = function (RED) {
                 node.send({
                     payload: content
                 });
-            }
-        });
-    }
-    function getPiholeValues(strURL, node, config) {
-        var httpOptions = {
-            url: "http://" + config.url + "/admin/api.php?" + strURL + "&auth=" + config.auth,
-            method: "GET",
-            json: true
-        };
-        var httpsOptions = {
-            url: "http://" + config.url + "/admin/api.php?" + strURL + "&auth=" + config.auth,
-            method: "GET",
-            json: true,
-            rejectUnauthorized: false
-        };
-        var reqOptions;
-        if (config.https === true) {
-            reqOptions = httpsOptions;
-        }
-        else {
-            reqOptions = httpOptions;
-        }
-        request(reqOptions, function (error, response, content) {
-            if (!error && response.statusCode == 200) {
-                for (var i in content) {
-                    if (typeof (content[i]) !== "object") {
-                        if (content.hasOwnProperty(i)) {
-                            node.send({
-                                payload: content[i], ack: true
-                            });
-                        }
-                    }
-                    else {
-                        if (content.hasOwnProperty(i)) {
-                            for (var j in content[i]) {
-                                if (typeof (content[i][j]) !== "object") {
-                                    if (strURL == "topItems" || strURL == "getQuerySources" || strURL == "overTimeData10mins" || strURL == "getForwardDestinations") {
-                                        node.send({
-                                            payload: "[" + JSON.stringify(content[i]) + "]", ack: true
-                                        });
-                                    }
-                                    else {
-                                        node.send({
-                                            payload: content[i][j], ack: true
-                                        });
-                                    }
-                                }
-                                else {
-                                    if (content[i].hasOwnProperty(j)) {
-                                        for (var k in content[i][j]) {
-                                            if (typeof (content[i][j][k]) !== "object") {
-                                                node.send({
-                                                    payload: content[i][j][k], ack: true
-                                                });
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         });
     }

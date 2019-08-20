@@ -43,15 +43,15 @@ module.exports = function (RED: Red) {
         if (command === "enable") {
             callApi("enable", node, configNode);
             setTimeout(() => {
-                getPiholeValues("summary", node, configNode);
-                getPiholeValues("summaryRaw", node, configNode);
+                callApi("summary", node, configNode);
+                callApi("summaryRaw", node, configNode);
             }, 1000);
         }
         if (command === "disable") {
             callApi("disable", node, configNode);
             setTimeout(() => {
-                getPiholeValues("summary", node, configNode);
-                getPiholeValues("summaryRaw", node, configNode);
+                callApi("summary", node, configNode);
+                callApi("summaryRaw", node, configNode);
             }, 1000);
         }
     }
@@ -89,71 +89,6 @@ module.exports = function (RED: Red) {
 
     }
 
-    function getPiholeValues(strURL, node: Node, config: Config) {
-        const httpOptions = {
-            url: `http://${config.url}/admin/api.php?${strURL}&auth=${config.auth}`,
-            method: "GET",
-            json: true
-        };
-
-        const httpsOptions = {
-            url: `http://${config.url}/admin/api.php?${strURL}&auth=${config.auth}`,
-            method: "GET",
-            json: true,
-            rejectUnauthorized: false
-        };
-
-        let reqOptions;
-        if (config.https === true) {
-            reqOptions = httpsOptions;
-        } else {
-            reqOptions = httpOptions;
-        }
-
-        request(reqOptions, (error, response, content) => {
-            if (!error && response.statusCode == 200) {
-                for (const i in content) {
-                    if (typeof (content[i]) !== "object") {
-                        if (content.hasOwnProperty(i)) {
-
-                            node.send({
-                                payload: content[i], ack: true
-                            })
-
-                        }
-                    } else {
-                        if (content.hasOwnProperty(i)) {
-                            for (const j in content[i]) {
-                                if (typeof (content[i][j]) !== "object") {
-                                    if (strURL == "topItems" || strURL == "getQuerySources" || strURL == "overTimeData10mins" || strURL == "getForwardDestinations") {
-                                        node.send({
-                                            payload: "[" + JSON.stringify(content[i]) + "]", ack: true
-                                        })
-
-                                    } else {
-                                        node.send({
-                                            payload: content[i][j], ack: true
-                                        })
-                                    }
-                                } else {
-                                    if (content[i].hasOwnProperty(j)) {
-
-                                        for (const k in content[i][j]) {
-                                            if (typeof (content[i][j][k]) !== "object") {
-                                                node.send({
-                                                    payload: content[i][j][k], ack: true
-                                                })
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
 
     RED.nodes.registerType("pi-hole-control", eventsNode);
 }
