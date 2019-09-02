@@ -22,7 +22,7 @@
   ],
   "keywords": [
     "node-red",
-    "pi-hole",  
+    "pi-hole",
     "Smart Home",
     "home automation"
   ],
@@ -37,7 +37,8 @@
     "url": "https://github.com/naimo84/node-red-contrib-pi-hole-remote"
   },
   "scripts": {
-    "start": "gulp && node-red"
+    "start": "gulp && node-red",
+    "test": "mocha \"test/**/*_spec.js\""
   },
   "dependencies": {
     "lodash": "^4.17.15",
@@ -50,6 +51,10 @@
     "@types/request": "^2.48.2",
     "gulp": "^4.0.2",
     "gulp-typescript": "^5.0.1",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "mocha": "6.2.0",
+    "node-red": "0.20.7",
+    "node-red-node-test-helper": "^0.2.3",
+    "should": "13.2.3"
   }
 }
