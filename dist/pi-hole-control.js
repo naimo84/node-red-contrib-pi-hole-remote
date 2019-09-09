@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var request = require("request");
 module.exports = function (RED) {
-    var configNode;
     function eventsNode(config) {
         var _this = this;
         RED.nodes.createNode(this, config);
-        configNode = RED.nodes.getNode(config.confignode);
+        var configNode = RED.nodes.getNode(config.confignode);
         try {
             this.on('input', function (msg) {
                 if (!msg.payload.hasOwnProperty("command")) {
@@ -53,7 +52,7 @@ module.exports = function (RED) {
             json: true
         };
         var httpsOptions = {
-            url: "http://" + config.url + "/admin/api.php?" + command + "&auth=" + config.auth,
+            url: "https://" + config.url + "/admin/api.php?" + command + "&auth=" + config.auth,
             method: "GET",
             json: true,
             rejectUnauthorized: false

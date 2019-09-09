@@ -9,12 +9,11 @@ export interface Config {
     https: boolean
 }
 
-module.exports = function (RED: Red) {
-    let configNode: Config;
+module.exports = function (RED: Red) { 
 
     function eventsNode(config: any) {
         RED.nodes.createNode(this, config);
-        configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
+        let configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
 
         try {
             this.on('input', (msg) => {
@@ -67,7 +66,7 @@ module.exports = function (RED: Red) {
         };
 
         const httpsOptions = {
-            url: `http://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
+            url: `https://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
             method: "GET",
             json: true,
             rejectUnauthorized: false
