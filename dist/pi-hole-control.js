@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var request = require("request");
+var request = require("request-promise");
 module.exports = function (RED) {
     function eventsNode(config) {
         var _this = this;
@@ -27,25 +27,61 @@ module.exports = function (RED) {
     }
     function executeCommand(command, node, configNode) {
         if (command === "" || command === "summary" || command === "status") {
-            callApi("summaryRaw", node, configNode);
+            callApi("summaryRaw", node, configNode, function (content) {
+                node.send({
+                    payload: content
+                });
+            });
         }
         if (command === "enable") {
-            callApi("enable", node, configNode);
-            setTimeout(function () {
-                callApi("summaryRaw", node, configNode);
-            }, 1000);
+            callApi("enable", node, configNode, function () {
+                setTimeout(function () {
+                    callApi("summaryRaw", node, configNode, function (content) {
+                        node.send({
+                            payload: content
+                        });
+                    });
+                }, 1000);
+            });
         }
         if (command === "disable") {
-            callApi("disable", node, configNode);
-            setTimeout(function () {
-                callApi("summaryRaw", node, configNode);
-            }, 1000);
+            callApi("disable", node, configNode, function (content) {
+                setTimeout(function () {
+                    callApi("summaryRaw", node, configNode, function (content) {
+                        node.send({
+                            payload: content
+                        });
+                    });
+                }, 1000);
+            });
+        }
+        if (command === "toggle") {
+            callApi("summaryRaw", node, configNode, function (current) {
+                console.log(current.status);
+                var newStatus = "enable";
+                if (current.status === 'enabled') {
+                    newStatus = "disable";
+                }
+                callApi(newStatus, node, configNode, function (enable) {
+                    setTimeout(function () {
+                        callApi("summaryRaw", node, configNode, function (content) {
+                            node.send({
+                                payload: content
+                            });
+                        });
+                    }, 1000);
+                });
+            });
         }
         if (command === "version") {
-            callApi("version", node, configNode);
+            callApi("version", node, configNode, function (content) {
+                node.send({
+                    payload: content
+                });
+            });
         }
     }
-    function callApi(command, node, config) {
+    function callApi(command, node, config, callback) {
         var httpOptions = {
             url: "http://" + config.url + "/admin/api.php?" + command + "&auth=" + config.auth,
             method: "GET",
@@ -64,12 +100,8 @@ module.exports = function (RED) {
         else {
             reqOptions = httpOptions;
         }
-        request(reqOptions, function (error, response, content) {
-            if (!error && response.statusCode == 200) {
-                node.send({
-                    payload: content
-                });
-            }
+        request(reqOptions).then(function (content) {
+            callback(content);
         });
     }
     RED.nodes.registerType("pi-hole-control", eventsNode);

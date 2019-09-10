@@ -1,6 +1,6 @@
 
 import { Red, Node } from 'node-red';
-import request = require('request');
+import request = require('request-promise');
 
 export interface Config {
     url: string,
@@ -9,7 +9,7 @@ export interface Config {
     https: boolean
 }
 
-module.exports = function (RED: Red) { 
+module.exports = function (RED: Red) {
 
     function eventsNode(config: any) {
         RED.nodes.createNode(this, config);
@@ -37,27 +37,64 @@ module.exports = function (RED: Red) {
 
     function executeCommand(command, node, configNode) {
         if (command === "" || command === "summary" || command === "status") {
-            callApi("summaryRaw", node, configNode);
+            callApi("summaryRaw", node, configNode, (content) => {
+                node.send({
+                    payload: content
+                });
+            });
         }
         if (command === "enable") {
-            callApi("enable", node, configNode);
-            setTimeout(() => {
-                callApi("summaryRaw", node, configNode);              
-            }, 1000);
+            callApi("enable", node, configNode, () => {
+                setTimeout(() => {
+                    callApi("summaryRaw", node, configNode, (content) => {
+                        node.send({
+                            payload: content
+                        });
+                    });
+                }, 1000);
+            });
         }
         if (command === "disable") {
-            callApi("disable", node, configNode);
-            setTimeout(() => {
-                callApi("summaryRaw", node, configNode);
-            }, 1000);
+            callApi("disable", node, configNode, (content) => {
+                setTimeout(() => {
+                    callApi("summaryRaw", node, configNode, (content) => {
+                        node.send({
+                            payload: content
+                        });
+                    });
+                }, 1000);
+            });
         }
-        if(command==="version"){            
-            callApi("version", node, configNode);
+        if (command === "toggle") {
+            callApi("summaryRaw", node, configNode, (current) => {
+                console.log(current.status);
+                var newStatus = "enable";
+                if (current.status === 'enabled') {
+                    newStatus = "disable";
+                }
+
+                callApi(newStatus, node, configNode, (enable) => {
+                    setTimeout(() => {
+                        callApi("summaryRaw", node, configNode, (content) => {
+                            node.send({
+                                payload: content
+                            })
+                        });
+                    }, 1000);
+                });
+            });
+        }
+        if (command === "version") {
+            callApi("version", node, configNode, (content) => {
+                node.send({
+                    payload: content
+                });
+            });
         }
     }
 
 
-    function callApi(command: string, node: Node, config: Config) {
+    function callApi(command: string, node: Node, config: Config, callback) {
 
         const httpOptions = {
             url: `http://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
@@ -79,14 +116,9 @@ module.exports = function (RED: Red) {
             reqOptions = httpOptions;
         }
 
-        request(reqOptions, (error, response, content) => {
-            if (!error && response.statusCode == 200) {
-                node.send({
-                    payload: content
-                });
-            }
-        })
-
+        request(reqOptions).then((content) => {
+            callback(content);
+        });
     }
 
 
