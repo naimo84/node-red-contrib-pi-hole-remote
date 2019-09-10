@@ -6,6 +6,7 @@ module.exports = function (RED) {
         var _this = this;
         RED.nodes.createNode(this, config);
         var configNode = RED.nodes.getNode(config.confignode);
+        this.disabletime = config.disabletime;
         try {
             this.on('input', function (msg) {
                 if (!msg.payload.hasOwnProperty("command")) {
@@ -57,7 +58,6 @@ module.exports = function (RED) {
         }
         if (command === "toggle") {
             callApi("summaryRaw", node, configNode, function (current) {
-                console.log(current.status);
                 var newStatus = "enable";
                 if (current.status === 'enabled') {
                     newStatus = "disable";
@@ -82,6 +82,9 @@ module.exports = function (RED) {
         }
     }
     function callApi(command, node, config, callback) {
+        if (command === "disable" && node.disabletime && node.disabletime > 0) {
+            command = "disable=" + node.disabletime;
+        }
         var httpOptions = {
             url: "http://" + config.url + "/admin/api.php?" + command + "&auth=" + config.auth,
             method: "GET",

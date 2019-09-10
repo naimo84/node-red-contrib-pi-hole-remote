@@ -14,7 +14,7 @@ module.exports = function (RED: Red) {
     function eventsNode(config: any) {
         RED.nodes.createNode(this, config);
         let configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
-
+        this.disabletime = config.disabletime;
         try {
             this.on('input', (msg) => {
                 if (!msg.payload.hasOwnProperty("command")) {
@@ -26,6 +26,7 @@ module.exports = function (RED: Red) {
                 else {
                     this.command = (config.command || "").trim();
                 }
+
                 executeCommand(this.command, this, configNode);
             });
         }
@@ -67,7 +68,6 @@ module.exports = function (RED: Red) {
         }
         if (command === "toggle") {
             callApi("summaryRaw", node, configNode, (current) => {
-                console.log(current.status);
                 var newStatus = "enable";
                 if (current.status === 'enabled') {
                     newStatus = "disable";
@@ -94,7 +94,11 @@ module.exports = function (RED: Red) {
     }
 
 
-    function callApi(command: string, node: Node, config: Config, callback) {
+    function callApi(command: string, node, config: Config, callback) {
+
+        if (command === "disable" && node.disabletime && node.disabletime > 0) {
+            command = `disable=${node.disabletime}`;
+        }
 
         const httpOptions = {
             url: `http://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
