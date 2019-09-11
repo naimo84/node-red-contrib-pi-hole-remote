@@ -122,6 +122,16 @@ module.exports = function (RED: Red) {
 
         request(reqOptions).then((content) => {
             callback(content);
+        }).catch((err) => {
+            if (err.cause && err.cause.code) {
+                if (err.cause.code === 'ECONNREFUSED') {
+                    callback("offline");
+                } else {
+                    callback(err);
+                }
+            } else {
+                callback(err);
+            }
         });
     }
 

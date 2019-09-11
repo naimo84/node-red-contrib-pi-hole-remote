@@ -105,6 +105,18 @@ module.exports = function (RED) {
         }
         request(reqOptions).then(function (content) {
             callback(content);
+        }).catch(function (err) {
+            if (err.cause && err.cause.code) {
+                if (err.cause.code === 'ECONNREFUSED') {
+                    callback("offline");
+                }
+                else {
+                    callback(err);
+                }
+            }
+            else {
+                callback(err);
+            }
         });
     }
     RED.nodes.registerType("pi-hole-control", eventsNode);
