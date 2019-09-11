@@ -88,13 +88,15 @@ module.exports = function (RED) {
         var httpOptions = {
             url: "http://" + config.url + "/admin/api.php?" + command + "&auth=" + config.auth,
             method: "GET",
-            json: true
+            json: true,
+            timeout: 2000
         };
         var httpsOptions = {
             url: "https://" + config.url + "/admin/api.php?" + command + "&auth=" + config.auth,
             method: "GET",
             json: true,
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            timeout: 2000
         };
         var reqOptions;
         if (config.https === true) {
@@ -107,7 +109,7 @@ module.exports = function (RED) {
             callback(content);
         }).catch(function (err) {
             if (err.cause && err.cause.code) {
-                if (err.cause.code === 'ECONNREFUSED') {
+                if (err.cause.code === 'ECONNREFUSED' || err.cause.code === 'ETIMEDOUT') {
                     callback("offline");
                 }
                 else {

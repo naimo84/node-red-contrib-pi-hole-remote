@@ -103,14 +103,16 @@ module.exports = function (RED: Red) {
         const httpOptions = {
             url: `http://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
             method: "GET",
-            json: true
+            json: true,
+            timeout: 2000
         };
 
         const httpsOptions = {
             url: `https://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
             method: "GET",
             json: true,
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            timeout: 2000
         };
 
         let reqOptions;
@@ -122,9 +124,9 @@ module.exports = function (RED: Red) {
 
         request(reqOptions).then((content) => {
             callback(content);
-        }).catch((err) => {
+        }).catch((err) => {           
             if (err.cause && err.cause.code) {
-                if (err.cause.code === 'ECONNREFUSED') {
+                if (err.cause.code === 'ECONNREFUSED' || err.cause.code === 'ETIMEDOUT') {
                     callback("offline");
                 } else {
                     callback(err);
