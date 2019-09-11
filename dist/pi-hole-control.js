@@ -110,7 +110,7 @@ module.exports = function (RED) {
         }).catch(function (err) {
             if (err.cause && err.cause.code) {
                 if (err.cause.code === 'ECONNREFUSED' || err.cause.code === 'ETIMEDOUT') {
-                    callback("offline");
+                    callback({ status: "offline" });
                 }
                 else {
                     callback(err);
