@@ -107,20 +107,10 @@ module.exports = function (RED) {
         }
         request(reqOptions, function (err, res, content) {
             if (err) {
-                if (err.code) {
-                    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
-                        callback({ status: "offline" });
-                    }
-                    else {
-                        callback(err);
-                    }
-                }
-                else {
-                    callback(err);
-                }
+                callback({ status: "offline", error_code: err.code });
             }
             else if (res.statusCode != 200) {
-                callback({ status: "offline" });
+                callback({ status: "offline", error_code: res.statusCode });
             }
             else {
                 callback(content);
