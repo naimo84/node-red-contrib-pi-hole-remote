@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var request = require("request-promise");
+var request = require("request");
 module.exports = function (RED) {
     function eventsNode(config) {
         var _this = this;
@@ -105,19 +105,25 @@ module.exports = function (RED) {
         else {
             reqOptions = httpOptions;
         }
-        request(reqOptions).then(function (content) {
-            callback(content);
-        }).catch(function (err) {
-            if (err.cause && err.cause.code) {
-                if (err.cause.code === 'ECONNREFUSED' || err.cause.code === 'ETIMEDOUT') {
-                    callback({ status: "offline" });
+        request(reqOptions, function (err, res, content) {
+            if (err) {
+                if (err.code) {
+                    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
+                        callback({ status: "offline" });
+                    }
+                    else {
+                        callback(err);
+                    }
                 }
                 else {
                     callback(err);
                 }
             }
+            else if (res.statusCode != 200) {
+                callback({ status: "offline" });
+            }
             else {
-                callback(err);
+                callback(content);
             }
         });
     }

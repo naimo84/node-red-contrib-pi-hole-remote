@@ -1,6 +1,6 @@
 
 import { Red, Node } from 'node-red';
-import request = require('request-promise');
+import request = require('request');
 
 export interface Config {
     url: string,
@@ -122,17 +122,22 @@ module.exports = function (RED: Red) {
             reqOptions = httpOptions;
         }
 
-        request(reqOptions).then((content) => {
-            callback(content);
-        }).catch((err) => {
-            if (err.cause && err.cause.code) {
-                if (err.cause.code === 'ECONNREFUSED' || err.cause.code === 'ETIMEDOUT') {
-                    callback({ status: "offline" });
+        request(reqOptions, (err, res, content) => {           
+            if (err) {
+                if (err.code) {
+                    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
+                        callback({ status: "offline" });
+                    } else {
+                        callback(err);
+                    }
                 } else {
                     callback(err);
                 }
+            }
+            else if (res.statusCode != 200) {
+                callback({ status: "offline" });
             } else {
-                callback(err);
+                callback(content);
             }
         });
     }
