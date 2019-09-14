@@ -15,13 +15,25 @@ module.exports = function (RED: Red) {
         RED.nodes.createNode(this, config);
         let configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
         this.disabletime = config.disabletime;
+        this.statustime = config.statustime;
         try {
             this.on('input', (msg) => {
                 if (!msg.payload.hasOwnProperty("command")) {
-                    msg.payload = JSON.parse(msg.payload);
+                    if (msg.payload !== "") {
+                        msg.payload = JSON.parse(msg.payload);
+                    } else {
+                        msg.payload = null;
+                    }
                 }
-                if (msg.payload.command) {
-                    this.command = msg.payload.command;
+                if (msg.payload && msg.payload.statustime) {
+                    this.statustime = msg.payload.statustime;                    
+                }
+                if (msg.payload && msg.payload.disabletime) {
+                    this.disabletime = msg.payload.disabletime;                    
+                }
+
+                if (msg.payload && msg.payload.command) {
+                    this.command = msg.payload.command;                    
                 }
                 else {
                     this.command = (config.command || "").trim();
@@ -37,6 +49,7 @@ module.exports = function (RED: Red) {
     }
 
     function executeCommand(command, node, configNode) {
+        let timeout = (node.statustime || 2) * 1000;
         if (command === "" || command === "summary" || command === "status") {
             callApi("summaryRaw", node, configNode, (content) => {
                 node.send({
@@ -52,7 +65,7 @@ module.exports = function (RED: Red) {
                             payload: content
                         });
                     });
-                }, 1000);
+                }, timeout);
             });
         }
         if (command === "disable") {
@@ -63,7 +76,7 @@ module.exports = function (RED: Red) {
                             payload: content
                         });
                     });
-                }, 1000);
+                }, timeout);
             });
         }
         if (command === "toggle") {
@@ -80,7 +93,7 @@ module.exports = function (RED: Red) {
                                 payload: content
                             })
                         });
-                    }, 1000);
+                    }, timeout);
                 });
             });
         }

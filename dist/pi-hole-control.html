@@ -8,10 +8,11 @@
                     value: "",
                     type: "pi-hole-config"
                 },
-                command: {value:""},
-                disabletime: {value:""},
+                command: { value: "" },
+                disabletime: { value: 300 },
+                statustime: { value: 5 },
                 name: {
-                    value: ""                   
+                    value: ""
                 }
             },
             inputs: 1,
@@ -55,9 +56,45 @@
         <label for="node-input-disabletime">Disable Pi-Hole for seconds</label>
         <input type="text" id="node-input-disabletime" placeholder="300">
     </div>
+    <div class="form-row">
+            <label for="node-input-statustime">Send status<br>after seconds</label>
+            <input type="text" id="node-input-statustime" placeholder="5">
+        </div>
 </script>
 
 <!-- Simple Help Text -->
-<script type="text/x-red" data-help-name="pi-hole-events">
-    
+<script type="text/x-red" data-help-name="pi-hole-control">
+    <h3>Inputs</h3>
+        <span class="property-type">payload</span>
+       <dl class="message-properties">
+       <dt>command
+           <span class="property-type">object</span>
+           <ul>
+               <li>toggle</li>
+               <li>enable</li>
+               <li>disable</li>
+               <li>status</li>
+               <li>version</li>
+           </ul>
+       </dt>
+       <dt>disabletime
+            <span class="property-type">number</span>
+            <div >if pihole is disabled, it will be reenabled after disabletime.</div>
+        <dt>
+        <dt>statustime
+            <span class="property-type">number</span>
+            <div >After enable/disable/toggle a status is send after statustime (in seconds).</div>
+            <dt>
+    </dl>
+       <span class="property-type">example:</span>
+<pre>{
+    payload: {
+        "command": "toggle"
+    }
+}
+</pre>
+       <span class="property-type">example flow:</span>
+       <pre>
+[{"id":"6e26137c.03e24c","type":"pi-hole-control","z":"ff776b13.2b49d8","confignode":"5e3d8a78.c6e314","command":"toggle","disabletime":"","name":"","x":400,"y":800,"wires":[["7c83bfa0.af8d9"]]},{"id":"7c83bfa0.af8d9","type":"debug","z":"ff776b13.2b49d8","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","x":570,"y":800,"wires":[]},{"id":"73325f5.9a08fa","type":"inject","z":"ff776b13.2b49d8","name":"","topic":"","payload":"{\"command\": \"status\"}","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":180,"y":800,"wires":[["6e26137c.03e24c"]]},{"id":"bdeccbce.3acfd8","type":"inject","z":"ff776b13.2b49d8","name":"","topic":"","payload":"{\"command\": \"toggle\"}","payloadType":"str","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":180,"y":840,"wires":[["6e26137c.03e24c"]]},{"id":"5e3d8a78.c6e314","type":"pi-hole-config","z":"","url":"10.0.0.1:8081","name":"","auth":"5ebfe99fd0d894370f872349aa50f44241a8f74c4c15377533ed17d4889694a1","https":false}]
+</pre>
 </script>

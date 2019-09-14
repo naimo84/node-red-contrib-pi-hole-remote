@@ -7,12 +7,24 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config);
         var configNode = RED.nodes.getNode(config.confignode);
         this.disabletime = config.disabletime;
+        this.statustime = config.statustime;
         try {
             this.on('input', function (msg) {
                 if (!msg.payload.hasOwnProperty("command")) {
-                    msg.payload = JSON.parse(msg.payload);
+                    if (msg.payload !== "") {
+                        msg.payload = JSON.parse(msg.payload);
+                    }
+                    else {
+                        msg.payload = null;
+                    }
                 }
-                if (msg.payload.command) {
+                if (msg.payload && msg.payload.statustime) {
+                    _this.statustime = msg.payload.statustime;
+                }
+                if (msg.payload && msg.payload.disabletime) {
+                    _this.disabletime = msg.payload.disabletime;
+                }
+                if (msg.payload && msg.payload.command) {
                     _this.command = msg.payload.command;
                 }
                 else {
@@ -27,6 +39,7 @@ module.exports = function (RED) {
         }
     }
     function executeCommand(command, node, configNode) {
+        var timeout = (node.statustime || 2) * 1000;
         if (command === "" || command === "summary" || command === "status") {
             callApi("summaryRaw", node, configNode, function (content) {
                 node.send({
@@ -42,7 +55,7 @@ module.exports = function (RED) {
                             payload: content
                         });
                     });
-                }, 1000);
+                }, timeout);
             });
         }
         if (command === "disable") {
@@ -53,7 +66,7 @@ module.exports = function (RED) {
                             payload: content
                         });
                     });
-                }, 1000);
+                }, timeout);
             });
         }
         if (command === "toggle") {
@@ -69,7 +82,7 @@ module.exports = function (RED) {
                                 payload: content
                             });
                         });
-                    }, 1000);
+                    }, timeout);
                 });
             });
         }
