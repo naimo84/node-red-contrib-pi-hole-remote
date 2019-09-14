@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.0.9...v0.0.10) (2019-09-14)
+
+
+### Features
+
+* new statustime, disabletime as payload ([0535eb5](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/0535eb5))
+
 ### [0.0.9](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.0.8...v0.0.9) (2019-09-12)
 
 
