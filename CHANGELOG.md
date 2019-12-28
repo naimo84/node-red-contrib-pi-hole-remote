@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.0.10...v0.0.13) (2019-12-28)
+
+
+### Features
+
+* issue [#5](https://github.com/naimo84/node-red-contrib-pi-hole-remote/issues/5), name to msg.payload ([27ba3e4](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/27ba3e4))
+
 ### [0.0.10](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.0.9...v0.0.10) (2019-09-14)
 
 
