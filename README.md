@@ -1,18 +1,25 @@
 # Node RED pi-hole remote
 
-## under active development
-
 This Node RED module controls a remote pi-hole.
 
 > Node-RED is a tool for wiring together hardware devices, APIs and online services in new and interesting ways.
 
-If you like it, please consider:
+## :sparkling_heart: Support my projects
 
-<a target="blank" href="https://brave.com/nai412"><img src="./examples/support_banner.png"/></a>
-<a target="blank" href="https://paypal.me/NeumannBenjamin"><img src="https://img.shields.io/badge/Donate-PayPal-blue.svg"/></a>
-<a target="blank" href="https://blockchain.info/payment_request?address=3KDjCmXsGFYawmycXRsVwfFbphog117N8P"><img src="https://img.shields.io/badge/Donate-Bitcoin-green.svg"/></a> 
+I open-source almost everything I can, and I try to reply to everyone needing help using these projects. Obviously,
+this takes time. You can integrate and use these projects in your applications _for free_! You can even change the source code and redistribute (even resell it).
 
-## Getting started
+However, if you get some profit from this or just want to encourage me to continue creating stuff, there are few ways you can do it:
+
+- Starring and sharing the projects you like :rocket:
+- [![PayPal][badge_paypal]][paypal-donations] **PayPal**— You can make one-time donations via PayPal. I'll probably buy a ~~coffee~~ tea. :tea:
+- [![Support me on using Brave Browser][badge_brave]][brave] **Brave**— It's free for you. Brave is a browser that improves the security and the access time of websites by blocking ads, trackers and scripts. Give the new Brave Browser a try and Brave will contribute to me on your behalf. :wink:
+- [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T412CXA) **Ko-fi**— I'll buy a ~~tea~~ coffee. :coffee: :wink:
+- ![](./examples/bitcoin.png) **Bitcoin**—You can send me bitcoins at this address (or scanning the code): `3KDjCmXsGFYawmycXRsVwfFbphog117N8P`
+
+Thanks! :heart:
+
+## :cloud: Installation
 
 First of all install [Node-RED](http://nodered.org/docs/getting-started/installation)
 
@@ -35,14 +42,16 @@ Then run
 node-red
 ```
 
-## Develop
+## :yum: How to contribute
 
-* git clone https://github.com/naimo84/node-red-contrib-pi-hole-remote.git
-* cd node-red-contrib-pi-hole-remote
-* npm install
-* gulp
-* cd ~/.node-red 
-* npm install /path/to/node-red-contrib-pi-hole-remote
+```sh
+git clone https://github.com/naimo84/node-red-contrib-pi-hole-remote.git
+cd node-red-contrib-pi-hole-remote
+npm install
+gulp
+cd ~/.node-red 
+npm install /path/to/node-red-contrib-pi-hole-remote
+```
 
 ## Usage
 
@@ -50,7 +59,7 @@ node-red
 - ***URL*** URL of pi-hole
 
 
-## The MIT License
+## :scroll: The MIT License
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

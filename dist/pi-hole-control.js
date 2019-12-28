@@ -7,6 +7,7 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config);
         var configNode = RED.nodes.getNode(config.confignode);
         this.disabletime = config.disabletime;
+        this.name = config.name;
         this.statustime = config.statustime;
         try {
             this.on('input', function (msg) {
@@ -120,12 +121,13 @@ module.exports = function (RED) {
         }
         request(reqOptions, function (err, res, content) {
             if (err) {
-                callback({ status: "offline", error_code: err.code });
+                callback({ status: "offline", error_code: err.code, name: node.name });
             }
             else if (res.statusCode != 200) {
-                callback({ status: "offline", error_code: res.statusCode });
+                callback({ status: "offline", error_code: res.statusCode, name: node.name });
             }
             else {
+                content.name = node.name;
                 callback(content);
             }
         });

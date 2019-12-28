@@ -15,6 +15,7 @@ module.exports = function (RED: Red) {
         RED.nodes.createNode(this, config);
         let configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
         this.disabletime = config.disabletime;
+        this.name = config.name;
         this.statustime = config.statustime;
         try {
             this.on('input', (msg) => {
@@ -26,14 +27,14 @@ module.exports = function (RED: Red) {
                     }
                 }
                 if (msg.payload && msg.payload.statustime) {
-                    this.statustime = msg.payload.statustime;                    
+                    this.statustime = msg.payload.statustime;
                 }
                 if (msg.payload && msg.payload.disabletime) {
-                    this.disabletime = msg.payload.disabletime;                    
+                    this.disabletime = msg.payload.disabletime;
                 }
 
                 if (msg.payload && msg.payload.command) {
-                    this.command = msg.payload.command;                    
+                    this.command = msg.payload.command;
                 }
                 else {
                     this.command = (config.command || "").trim();
@@ -137,10 +138,11 @@ module.exports = function (RED: Red) {
 
         request(reqOptions, (err, res, content) => {
             if (err) {
-                callback({ status: "offline", error_code: err.code });
+                callback({ status: "offline", error_code: err.code, name: node.name });
             } else if (res.statusCode != 200) {
-                callback({ status: "offline", error_code: res.statusCode });
+                callback({ status: "offline", error_code: res.statusCode, name: node.name });
             } else {
+                content.name = node.name;
                 callback(content);
             }
         });
