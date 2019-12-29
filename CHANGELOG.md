@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.1...v0.1.2) (2019-12-29)
+
+
+### Features
+
+* issue [#5](https://github.com/naimo84/node-red-contrib-pi-hole-remote/issues/5), configurable pihole as input message ([ec4d821](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/ec4d821da23992dea812b9d830ebb42f60ac3526))
+
 ### [0.1.1](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.0...v0.1.1) (2019-12-29)
 
 
