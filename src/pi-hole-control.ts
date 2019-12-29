@@ -6,6 +6,7 @@ export interface Config {
     url: string,
     command: string,
     auth: string,
+    name: string,
     https: boolean
 }
 
@@ -16,6 +17,7 @@ module.exports = function (RED: Red) {
         let configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
         this.disabletime = config.disabletime;
         this.name = config.name;
+        this.pihole = configNode.name;
         this.statustime = config.statustime;
         try {
             this.on('input', (msg) => {
@@ -138,11 +140,12 @@ module.exports = function (RED: Red) {
 
         request(reqOptions, (err, res, content) => {
             if (err) {
-                callback({ status: "offline", error_code: err.code, name: node.name });
+                callback({ status: "offline", error_code: err.code, name: node.name,pihole : node.pihole });
             } else if (res.statusCode != 200) {
-                callback({ status: "offline", error_code: res.statusCode, name: node.name });
+                callback({ status: "offline", error_code: res.statusCode, name: node.name,pihole : node.pihole });
             } else {
                 content.name = node.name;
+                content.pihole = node.pihole;
                 callback(content);
             }
         });

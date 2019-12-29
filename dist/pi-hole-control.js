@@ -8,6 +8,7 @@ module.exports = function (RED) {
         var configNode = RED.nodes.getNode(config.confignode);
         this.disabletime = config.disabletime;
         this.name = config.name;
+        this.pihole = configNode.name;
         this.statustime = config.statustime;
         try {
             this.on('input', function (msg) {
@@ -121,13 +122,14 @@ module.exports = function (RED) {
         }
         request(reqOptions, function (err, res, content) {
             if (err) {
-                callback({ status: "offline", error_code: err.code, name: node.name });
+                callback({ status: "offline", error_code: err.code, name: node.name, pihole: node.pihole });
             }
             else if (res.statusCode != 200) {
-                callback({ status: "offline", error_code: res.statusCode, name: node.name });
+                callback({ status: "offline", error_code: res.statusCode, name: node.name, pihole: node.pihole });
             }
             else {
                 content.name = node.name;
+                content.pihole = node.pihole;
                 callback(content);
             }
         });
