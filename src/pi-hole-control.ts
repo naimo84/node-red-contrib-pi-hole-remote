@@ -15,12 +15,14 @@ module.exports = function (RED: Red) {
     function eventsNode(config: any) {
         RED.nodes.createNode(this, config);
         let configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
-        this.disabletime = config.disabletime;
-        this.name = config.name;
-        this.pihole = configNode.name;
-        this.statustime = config.statustime;
+        let node = this;
+        node.disabletime = config.disabletime;
+        node.name = config.name;
+        
+        node.statustime = config.statustime;
+
         try {
-            this.on('input', (msg) => {
+            node.on('input', (msg) => {
                 if (!msg.payload.hasOwnProperty("command")) {
                     if (msg.payload !== "") {
                         msg.payload = JSON.parse(msg.payload);
@@ -29,25 +31,39 @@ module.exports = function (RED: Red) {
                     }
                 }
                 if (msg.payload && msg.payload.statustime) {
-                    this.statustime = msg.payload.statustime;
+                    node.statustime = msg.payload.statustime;
                 }
                 if (msg.payload && msg.payload.disabletime) {
-                    this.disabletime = msg.payload.disabletime;
+                    node.disabletime = msg.payload.disabletime;
                 }
 
                 if (msg.payload && msg.payload.command) {
-                    this.command = msg.payload.command;
+                    node.command = msg.payload.command;
                 }
                 else {
-                    this.command = (config.command || "").trim();
+                    node.command = (config.command || "").trim();
                 }
 
-                executeCommand(this.command, this, configNode);
+                let found = false;
+                if (msg.payload && msg.payload.pihole) {
+                    RED.nodes.eachNode(n => {
+                        if (n.type === 'pi-hole-config' && n.name === msg.payload.pihole) {
+                            configNode = n as unknown as Config;
+                            found = true;
+                        }
+                    })
+                }
+
+                if (!found) {
+                    configNode = RED.nodes.getNode(config.confignode) as unknown as Config;
+                }
+                node.pihole = configNode.name;               
+                executeCommand(node.command, node, configNode);
             });
         }
         catch (err) {
-            this.error('Error: ' + err.message);
-            this.status({ fill: "red", shape: "ring", text: err.message })
+            node.error('Error: ' + err.message);
+            node.status({ fill: "red", shape: "ring", text: err.message })
         }
     }
 
@@ -140,9 +156,9 @@ module.exports = function (RED: Red) {
 
         request(reqOptions, (err, res, content) => {
             if (err) {
-                callback({ status: "offline", error_code: err.code, name: node.name,pihole : node.pihole });
+                callback({ status: "offline", error_code: err.code, name: node.name, pihole: node.pihole });
             } else if (res.statusCode != 200) {
-                callback({ status: "offline", error_code: res.statusCode, name: node.name,pihole : node.pihole });
+                callback({ status: "offline", error_code: res.statusCode, name: node.name, pihole: node.pihole });
             } else {
                 content.name = node.name;
                 content.pihole = node.pihole;

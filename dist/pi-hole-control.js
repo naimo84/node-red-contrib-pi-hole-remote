@@ -3,15 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var request = require("request");
 module.exports = function (RED) {
     function eventsNode(config) {
-        var _this = this;
         RED.nodes.createNode(this, config);
         var configNode = RED.nodes.getNode(config.confignode);
-        this.disabletime = config.disabletime;
-        this.name = config.name;
-        this.pihole = configNode.name;
-        this.statustime = config.statustime;
+        var node = this;
+        node.disabletime = config.disabletime;
+        node.name = config.name;
+        node.statustime = config.statustime;
         try {
-            this.on('input', function (msg) {
+            node.on('input', function (msg) {
                 if (!msg.payload.hasOwnProperty("command")) {
                     if (msg.payload !== "") {
                         msg.payload = JSON.parse(msg.payload);
@@ -21,23 +20,36 @@ module.exports = function (RED) {
                     }
                 }
                 if (msg.payload && msg.payload.statustime) {
-                    _this.statustime = msg.payload.statustime;
+                    node.statustime = msg.payload.statustime;
                 }
                 if (msg.payload && msg.payload.disabletime) {
-                    _this.disabletime = msg.payload.disabletime;
+                    node.disabletime = msg.payload.disabletime;
                 }
                 if (msg.payload && msg.payload.command) {
-                    _this.command = msg.payload.command;
+                    node.command = msg.payload.command;
                 }
                 else {
-                    _this.command = (config.command || "").trim();
+                    node.command = (config.command || "").trim();
                 }
-                executeCommand(_this.command, _this, configNode);
+                var found = false;
+                if (msg.payload && msg.payload.pihole) {
+                    RED.nodes.eachNode(function (n) {
+                        if (n.type === 'pi-hole-config' && n.name === msg.payload.pihole) {
+                            configNode = n;
+                            found = true;
+                        }
+                    });
+                }
+                if (!found) {
+                    configNode = RED.nodes.getNode(config.confignode);
+                }
+                node.pihole = configNode.name;
+                executeCommand(node.command, node, configNode);
             });
         }
         catch (err) {
-            this.error('Error: ' + err.message);
-            this.status({ fill: "red", shape: "ring", text: err.message });
+            node.error('Error: ' + err.message);
+            node.status({ fill: "red", shape: "ring", text: err.message });
         }
     }
     function executeCommand(command, node, configNode) {

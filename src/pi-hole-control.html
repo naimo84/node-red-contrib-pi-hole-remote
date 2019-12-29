@@ -85,11 +85,16 @@
             <span class="property-type">number</span>
             <div >After enable/disable/toggle a status is send after statustime (in seconds).</div>
             <dt>
+        <dt>pihole
+                <span class="property-type">string</span>
+                <div>If defined, the config with this name is used. Instead of the config in the properties.</div>
+                <dt>
     </dl>
        <span class="property-type">example:</span>
 <pre>{
     payload: {
-        "command": "toggle"
+        "command": "toggle",
+        "pihole": "pihole #1"
     }
 }
 </pre>
