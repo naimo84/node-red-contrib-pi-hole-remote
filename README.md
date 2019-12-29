@@ -55,6 +55,36 @@ npm install /path/to/node-red-contrib-pi-hole-remote
 
 ## Usage
 
+### Inputs
+
+- payload
+    - command
+        - toggle
+        - enable
+        - disable
+        - status
+        - version
+  - disabletime
+        number
+        if pihole is disabled, it will be reenabled after disabletime.
+  - statustime
+        number
+        After enable/disable/toggle a status is send after statustime (in seconds).
+  - pihole
+            string
+            If defined, the config with this name is used. Instead of the config in the properties.
+
+example:
+
+```json
+{
+    payload: {
+        "command": "toggle",
+        "pihole": "pihole #1"
+    }
+}
+```
+
 ### Configuration:
 - ***URL*** URL of pi-hole
 
