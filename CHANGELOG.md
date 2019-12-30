@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.2...v0.1.3) (2019-12-30)
+
+
+### Bug Fixes
+
+* [#5](https://github.com/naimo84/node-red-contrib-pi-hole-remote/issues/5), json parse error ([b128e76](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/b128e7605dec17fe222750beda519b85f10c105d))
+
 ### [0.1.2](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.1...v0.1.2) (2019-12-29)
 
 
