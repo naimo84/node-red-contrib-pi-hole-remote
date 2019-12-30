@@ -23,7 +23,7 @@ module.exports = function (RED: Red) {
 
         try {
             node.on('input', (msg) => {
-                if (!msg.payload.hasOwnProperty("command")) {
+                if (!msg.payload.hasOwnProperty("command") && !msg.payload.hasOwnProperty("pihole")) {
                     if (msg.payload !== "") {
                         msg.payload = JSON.parse(msg.payload);
                     } else {

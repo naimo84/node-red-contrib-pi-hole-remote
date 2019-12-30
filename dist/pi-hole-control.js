@@ -11,7 +11,7 @@ module.exports = function (RED) {
         node.statustime = config.statustime;
         try {
             node.on('input', function (msg) {
-                if (!msg.payload.hasOwnProperty("command")) {
+                if (!msg.payload.hasOwnProperty("command") && !msg.payload.hasOwnProperty("pihole")) {
                     if (msg.payload !== "") {
                         msg.payload = JSON.parse(msg.payload);
                     }
