@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.3...v0.1.4) (2020-01-04)
+
+
+### Bug Fixes
+
+* issue [#7](https://github.com/naimo84/node-red-contrib-pi-hole-remote/issues/7), output of pihole name always the samefeat: issue [#7](https://github.com/naimo84/node-red-contrib-pi-hole-remote/issues/7), command to all pihole at the same time ([1ca0e97](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/1ca0e9716fdd3be68ab0f0165348d3fcf74d6daf))
+
 ### [0.1.3](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.2...v0.1.3) (2019-12-30)
 
 
