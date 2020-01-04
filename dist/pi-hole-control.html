@@ -13,7 +13,8 @@
                 statustime: { value: 5 },
                 name: {
                     value: ""
-                }
+                },
+                all: { value: false}
             },
             inputs: 1,
             outputs: 1,
@@ -37,6 +38,10 @@
         <label for="node-input-confignode">Config</label>
         <input type="text" id="node-input-confignode">
     </div>    
+    <div class="form-row">
+        <label for="node-input-all">Send command to all piholes</label>
+        <input type="checkbox" id="node-input-all"  placeholder="" style="width:16px !important">
+    </div>
     <div class="form-row">
         <label for="node-input-name">Name</label>
         <input type="text" id="node-input-name">
@@ -87,7 +92,7 @@
             <dt>
         <dt>pihole
                 <span class="property-type">string</span>
-                <div>If defined, the config with this name is used. Instead of the config in the properties.</div>
+                <div>If defined, the config with this name is used. Instead of the config in the properties. If msg.payload.pihole == "all", command wwill to send to all configs.</div>
                 <dt>
     </dl>
        <span class="property-type">example:</span>

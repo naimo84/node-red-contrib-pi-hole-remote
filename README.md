@@ -73,6 +73,7 @@ npm install /path/to/node-red-contrib-pi-hole-remote
   - pihole
             string
             If defined, the config with this name is used. Instead of the config in the properties.
+            If msg.payload.pihole == "all", command wwill to send to all configs.
 
 example:
 
@@ -86,7 +87,8 @@ example:
 ```
 
 ### Configuration:
-- ***URL*** URL of pi-hole
+- ***URL*** URL of pi-hole, without http/https and without admin path. (e.g. pihole:8080)
+- ***Send command to all piholes***  command wwill to send to all configs
 
 
 ## :scroll: The MIT License
