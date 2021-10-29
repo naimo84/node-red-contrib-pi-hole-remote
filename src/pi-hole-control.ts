@@ -23,7 +23,7 @@ module.exports = function (RED: Red) {
                 node.all = config.all;
                 node.statustime = config.statustime;
 
-                if (!msg.payload.hasOwnProperty("command") && !msg.payload.hasOwnProperty("pihole")) {
+                if (msg.payload && !msg.payload.hasOwnProperty("command") && !msg.payload.hasOwnProperty("pihole")) {
                     if (msg.payload !== "") {
                         msg.payload = JSON.parse(msg.payload);
                     } else {

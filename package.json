@@ -38,9 +38,10 @@
   },
   "scripts": {
     "start": "gulp && node-red",
-    "test": "mocha \"test/**/*_spec.js\"",
-    "release": "standard-version",
-    "releasepush": "standard-version && git push --follow-tags"
+    "release-bugfix": "npm run build && standard-version",
+    "release": "npm run build && standard-version --release-as minor",
+    "dev": "gulp develop",
+    "build": "gulp"
   },
   "husky": {
     "hooks": {
@@ -48,26 +49,29 @@
     }
   },
   "dependencies": {
-    "lodash": "^4.17.15",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4"
+    "lodash": "^4.17.21",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.136",
-    "@types/node": "^12.0.10",
-    "@types/node-red": "^0.20.0",
-    "@types/request": "^2.48.2",
-    "@types/request-promise": "^4.1.14",
+    "@types/lodash": "^4.14.176",
+    "@types/node": "^16.11.6",
+    "@types/node-red": "^0.20.1",
+    "@types/request": "^2.48.7",
+    "@types/request-promise": "^4.1.48",
     "gulp": "^4.0.2",
-    "commitlint": "^8.1.0",
-    "gulp-typescript": "^5.0.1",
-    "typescript": "^3.5.2",
-    "mocha": "6.2.0",
-    "node-red": "0.20.7",
-    "node-red-node-test-helper": "^0.2.3",
-    "standard-version": "^7.0.0",
+    "gulp-nodemon": "^2.5.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-typescript": "6.0.0-alpha.1",
+    "gulp-watch": "^5.0.1",
+    "husky": "7.0.4",
+    "mocha": "9.1.3",
+    "node-red": "2.1.3",
+    "node-red-node-test-helper": "^0.2.7",
+    "nodemon": "^2.0.14",
     "should": "13.2.3",
-    "husky": "3.0.3"
+    "standard-version": "^9.3.2",
+    "typescript": "^4.4.4"
   },
   "commitlint": {
     "format": {
