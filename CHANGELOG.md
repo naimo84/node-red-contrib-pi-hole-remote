@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.4...v0.2.0) (2021-10-29)
+
+
+### Bug Fixes
+
+* 'hasOwnProperty' of undefined, [#23](https://github.com/naimo84/node-red-contrib-pi-hole-remote/issues/23) ([ecc60bf](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/ecc60bf6637bdffb941df229f133c57ccc79b5e5))
+
 ### [0.1.4](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.1.3...v0.1.4) (2020-01-04)
 
 
