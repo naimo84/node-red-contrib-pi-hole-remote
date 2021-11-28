@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.3.0...v0.4.0) (2021-11-28)
+
+
+### Features
+
+* use pi-hole-remote lib ([50b776e](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/50b776ee9a46f830195226fb5eee0926f42d8186))
+
 ## [0.3.0](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.2.0...v0.3.0) (2021-11-28)
 
 
