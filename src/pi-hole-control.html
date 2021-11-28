@@ -9,12 +9,15 @@
                     type: "pi-hole-config"
                 },
                 command: { value: "" },
+                commandtype: {},
                 disabletime: { value: 300 },
+                disabletimetype: {},
                 statustime: { value: 5 },
+                statustimetype: {},
                 name: {
                     value: ""
                 },
-                all: { value: false}
+                all: { value: false }
             },
             inputs: 1,
             outputs: 1,
@@ -29,7 +32,34 @@
                 return "pi-hole Control";
             },
             icon: "pi-hole.png",
-            paletteLabel: "Control"
+            paletteLabel: "Control",
+            oneditprepare: function () {
+                let id = this.config;
+                $("#node-input-statustime").typedInput({
+                    typeField: "#node-input-statustimetype",
+                    types: ["str", "msg"]
+                })
+
+                $("#node-input-disabletime").typedInput({
+                    typeField: "#node-input-disabletimetype",
+                    types: ["str", "msg"]
+                })
+                $("#node-input-command").typedInput({
+                    typeField: "#node-input-commandtype",
+                    types: ["str", "msg", {
+                        value: "action",
+                        options: [
+                            { value: "", label: "None" },
+                            { value: "toggle", label: "Toggle Enable/Disable Pi-hole" },
+                            { value: "enable", label: "Enable Pi-hole" },
+                            { value: "disable", label: "Disable Pi-hole" },
+                            { value: "status", label: "Get Pi-hole status" },
+                            { value: "version", label: "Get Pi-hole version" },
+                        ]
+                    }],
+
+                });
+            }
         });
 </script>
 
@@ -48,23 +78,19 @@
     </div>
     <div class="form-row">
         <label for="node-input-command">Command</label>
-        <select type="text" id="node-input-command">
-            <option value="">None</option>
-            <option value="toggle">Toggle Enable/Disable Pi-hole</option>
-            <option value="enable">Enable Pi-hole</option>
-            <option value="disable">Disable Pi-hole</option>               
-            <option value="status">Get Pi-hole status</option>
-            <option value="version">Get Pi-hole version</option>   
-        </select>
+        <input type="text" id="node-input-command">
+        <input type="hidden" id="node-input-commandtype">
     </div>
     <div class="form-row">
         <label for="node-input-disabletime">Disable Pi-Hole for seconds</label>
         <input type="text" id="node-input-disabletime" placeholder="300">
+        <input type="hidden" id="node-input-disabletimetype">
     </div>
     <div class="form-row">
             <label for="node-input-statustime">Send status<br>after seconds</label>
             <input type="text" id="node-input-statustime" placeholder="5">
-        </div>
+        <input type="hidden" id="node-input-statustimetype">
+    </div>
 </script>
 
 <!-- Simple Help Text -->

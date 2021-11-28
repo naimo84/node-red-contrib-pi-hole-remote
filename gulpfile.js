@@ -29,7 +29,7 @@ gulp.task('develop', function (done) {
         ignore: ["*.map"],
         done: done,
         verbose: true,
-        delay: 1000,
+        delay: 10000,
         env: { "NO_UPDATE_NOTIFIER": "1" }
     });
 
@@ -54,7 +54,7 @@ gulp.task('develop', function (done) {
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(paths.dist));
 
-        stream.emit('restart', 10)
+        stream.emit('restart', 10000)
     });
 
     stream

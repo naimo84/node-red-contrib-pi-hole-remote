@@ -1,6 +1,6 @@
 
-import { Red, Node } from 'node-red';
-import request = require('request');
+import { Red } from 'node-red';
+import { callApi, Cmd } from 'pi-hole-remote';
 
 export interface Config {
     url: string,
@@ -10,6 +10,14 @@ export interface Config {
     https: boolean
 }
 
+interface Options {
+    disabletime?: any;
+    name?: any;
+    all?: any;
+    statustime?: any;
+    command?: any;
+}
+
 module.exports = function (RED: Red) {
 
     function eventsNode(config: any) {
@@ -17,11 +25,10 @@ module.exports = function (RED: Red) {
         RED.nodes.createNode(node, config);
 
         try {
-            node.on('input', (msg) => {
-                node.disabletime = config.disabletime;
-                node.name = config.name;
-                node.all = config.all;
-                node.statustime = config.statustime;
+            node.on('input', (msg, send) => {
+                let options: Options = {}
+                options.name = config.name;
+                options.all = config.all;
 
                 if (msg.payload && !msg.payload.hasOwnProperty("command") && !msg.payload.hasOwnProperty("pihole")) {
                     if (msg.payload !== "") {
@@ -30,25 +37,24 @@ module.exports = function (RED: Red) {
                         msg.payload = null;
                     }
                 }
+                options.statustime = RED.util.evaluateNodeProperty(config.statustime, config.statustimetype, config, msg);
+                options.disabletime = RED.util.evaluateNodeProperty(config.disabletime, config.disabletimetype, config, msg);
+                options.command = RED.util.evaluateNodeProperty(config.command, config.commandtype, config, msg);
+
                 if (msg.payload && msg.payload.statustime) {
-                    node.statustime = msg.payload.statustime;
+                    options.statustime = msg.payload.statustime;
                 }
                 if (msg.payload && msg.payload.disabletime) {
-                    node.disabletime = msg.payload.disabletime;
+                    options.disabletime = msg.payload.disabletime;
                 }
-
                 if (msg.payload && msg.payload.command) {
-                    node.command = msg.payload.command;
+                    options.command = msg.payload.command;
                 }
-                else {
-                    node.command = (config.command || "").trim();
-                }
-
 
                 let configs = [];
-                if ((msg.payload && msg.payload.pihole) || node.all === true) {
+                if ((msg.payload && msg.payload.pihole) || options.all === true) {
                     RED.nodes.eachNode(n => {
-                        if (n.type === 'pi-hole-config' && (n.name === msg.payload.pihole || msg.payload.pihole == "all" || node.all === true)) {
+                        if (n.type === 'pi-hole-config' && (n.name === msg.payload.pihole || msg.payload.pihole == "all" || options.all === true)) {
                             configs.push(n);
                         }
                     })
@@ -59,7 +65,7 @@ module.exports = function (RED: Red) {
                 }
 
                 for (let configNode of configs) {
-                    executeCommand(node.command, node, configNode);
+                    executeCommand(options.command, options, send, configNode);
                 }
             });
         }
@@ -69,48 +75,41 @@ module.exports = function (RED: Red) {
         }
     }
 
-    function executeCommand(command, node, configNode) {
-        let timeout = (node.statustime || 2) * 1000;
-        if (command === "" || command === "summary" || command === "status") {
-            callApi("summaryRaw", node, configNode, (content) => {
-                node.send({
+    function executeCommand(command: Cmd, options, send, configNode: Config) {
+        let timeout = (options.statustime || 2) * 1000;
+        if (command.toString() === "" || command === Cmd.summary || command === Cmd.status) {
+            callApiInternal(Cmd.summaryRaw, options, configNode, (content) => {
+                send({
                     payload: content
                 });
             });
-        }
-        if (command === "enable") {
-            callApi("enable", node, configNode, () => {
+        } else if (command === Cmd.version) {
+            callApiInternal(Cmd.version, options, configNode, (content) => {
+                send({
+                    payload: content
+                });
+            });
+        } else if (command === Cmd.enable || command === Cmd.disable) {
+            callApiInternal(command, options, configNode, () => {
                 setTimeout(() => {
-                    callApi("summaryRaw", node, configNode, (content) => {
-                        node.send({
+                    callApiInternal(Cmd.summaryRaw, options, configNode, (content) => {
+                        send({
                             payload: content
                         });
                     });
                 }, timeout);
             });
-        }
-        if (command === "disable") {
-            callApi("disable", node, configNode, (content) => {
-                setTimeout(() => {
-                    callApi("summaryRaw", node, configNode, (content) => {
-                        node.send({
-                            payload: content
-                        });
-                    });
-                }, timeout);
-            });
-        }
-        if (command === "toggle") {
-            callApi("summaryRaw", node, configNode, (current) => {
-                var newStatus = "enable";
+        } else if (command === Cmd.toggle) {
+            callApiInternal(Cmd.summaryRaw, options, configNode, (current) => {
+                var newStatus = Cmd.enable;
                 if (current.status === 'enabled') {
-                    newStatus = "disable";
+                    newStatus = Cmd.disable;
                 }
 
-                callApi(newStatus, node, configNode, (enable) => {
+                callApiInternal(newStatus, options, configNode, () => {
                     setTimeout(() => {
-                        callApi("summaryRaw", node, configNode, (content) => {
-                            node.send({
+                        callApiInternal(Cmd.summaryRaw, options, configNode, (content) => {
+                            send({
                                 payload: content
                             })
                         });
@@ -118,58 +117,20 @@ module.exports = function (RED: Red) {
                 });
             });
         }
-        if (command === "version") {
-            callApi("version", node, configNode, (content) => {
-
-                node.send({
-                    payload: content
-                });
-            });
-        }
     }
 
-
-    function callApi(command: string, node, config: Config, callback) {
-
-        if (command === "disable" && node.disabletime && node.disabletime > 0) {
-            command = `disable=${node.disabletime}`;
-        }
-
-        const httpOptions = {
-            url: `http://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
-            method: "GET",
-            json: true,
-            timeout: 2000
-        };
-
-        const httpsOptions = {
-            url: `https://${config.url}/admin/api.php?${command}&auth=${config.auth}`,
-            method: "GET",
-            json: true,
-            rejectUnauthorized: false,
-            timeout: 2000
-        };
-
-        let reqOptions;
-        if (config.https === true) {
-            reqOptions = httpsOptions;
-        } else {
-            reqOptions = httpOptions;
-        }
-
-        request(reqOptions, (err, res, content) => {
+    async function callApiInternal(command: Cmd, options, config: Config, callback) {
+        try {
+            let content = await callApi(command, config) as any
+            content.name = options.name;
+            content.pihole = config.name;
+            callback(content);
+        } catch (err) {
             if (err) {
-                callback({ status: "offline", error_code: err.code, name: node.name, pihole: config.name });
-            } else if (res.statusCode != 200) {
-                callback({ status: "offline", error_code: res.statusCode, name: node.name, pihole: config.name });
-            } else {
-                content.name = node.name;
-                content.pihole = config.name;
-                callback(content);
+                callback({ status: "offline", error_code: err.code, name: options.name, pihole: config.name });
             }
-        });
+        }
     }
-
 
     RED.nodes.registerType("pi-hole-control", eventsNode);
 }
