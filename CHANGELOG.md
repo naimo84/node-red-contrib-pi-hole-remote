@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.1](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.6.0...v0.6.1) (2021-11-30)
+
+
+### Bug Fixes
+
+* options handling ([de41e6d](https://github.com/naimo84/node-red-contrib-pi-hole-remote/commit/de41e6db8ebd85cad87c473c0aaed0dcead580b8))
+
 ## [0.6.0](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.5.0...v0.6.0) (2021-11-29)
 
 ## [0.5.0](https://github.com/naimo84/node-red-contrib-pi-hole-remote/compare/v0.4.0...v0.5.0) (2021-11-28)
