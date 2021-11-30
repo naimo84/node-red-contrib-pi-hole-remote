@@ -1,21 +1,11 @@
 
 import { Red } from 'node-red';
-import { callApi, Cmd } from 'pi-hole-remote';
+import { callApi, Cmd, Config } from 'pi-hole-remote';
 
-export interface Config {
-    url: string,
-    command: string,
-    auth: string,
-    name: string,
-    https: boolean
-}
-
-interface Options {
-    disabletime?: any;
-    name?: any;
-    all?: any;
-    statustime?: any;
-    command?: any;
+interface NodeConfig extends Config {
+    name?: string;
+    all?: boolean;
+    statustime?: number;
 }
 
 module.exports = function (RED: Red) {
@@ -26,7 +16,7 @@ module.exports = function (RED: Red) {
 
         try {
             node.on('input', (msg, send) => {
-                let options: Options = {}
+                let options: NodeConfig = {}
                 options.name = config.name;
                 options.all = config.all;
 
@@ -65,7 +55,7 @@ module.exports = function (RED: Red) {
                 }
 
                 for (let configNode of configs) {
-                    executeCommand(options.command, options, send, configNode);
+                    executeCommand(options.command as Cmd, options, send, configNode);
                 }
             });
         }
@@ -119,9 +109,9 @@ module.exports = function (RED: Red) {
         }
     }
 
-    async function callApiInternal(command: Cmd, options, config: Config, callback) {
+    async function callApiInternal(command: Cmd, options: any, config: NodeConfig, callback) {
         try {
-            let content = await callApi(command, config) as any
+            let content = await callApi(command, Object.assign(options, config)) as any
             content.name = options.name;
             content.pihole = config.name;
             callback(content);
