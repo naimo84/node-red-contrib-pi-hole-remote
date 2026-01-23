@@ -49,7 +49,7 @@
     }
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "pi-hole-remote": "^0.1.2",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
